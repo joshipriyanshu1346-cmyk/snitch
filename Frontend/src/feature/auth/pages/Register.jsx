@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
-
+import { useAuth } from '../hook/useAuth';
+import { useNavigate } from 'react-router-dom';
 export const Register = () => {
   const [formData, setFormData] = useState({
     fullName: '',
@@ -10,7 +11,8 @@ export const Register = () => {
   });
   const [showPassword, setShowPassword] = useState(false);
   const [focused, setFocused] = useState('');
-
+  const { handleRegister } = useAuth();
+  const navigate = useNavigate();
   const handleChange = (e) => {
     const { name, value, type, checked } = e.target;
     setFormData((prev) => ({
@@ -21,7 +23,20 @@ export const Register = () => {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    console.log('Form submitted:', formData);
+    try{
+      handleRegister({
+        email:formData.email,
+        password:formData.password,
+        contact:formData.contactNumber,
+        fullname:formData.fullName,
+        isSeller:formData.isSeller
+      });
+      navigate("/")
+    }
+    catch(err){
+      console.log(err)
+    }
+
   };
 
   return (
@@ -166,15 +181,14 @@ export const Register = () => {
                   {[...Array(4)].map((_, i) => (
                     <div
                       key={i}
-                      className={`h-1 flex-1 rounded-full transition-all duration-300 ${
-                        formData.password.length > i * 3
-                          ? formData.password.length < 6
-                            ? 'bg-red-500'
-                            : formData.password.length < 10
+                      className={`h-1 flex-1 rounded-full transition-all duration-300 ${formData.password.length > i * 3
+                        ? formData.password.length < 6
+                          ? 'bg-red-500'
+                          : formData.password.length < 10
                             ? 'bg-amber-500'
                             : 'bg-emerald-500'
-                          : 'bg-white/10'
-                      }`}
+                        : 'bg-white/10'
+                        }`}
                     />
                   ))}
                 </div>
@@ -211,11 +225,10 @@ export const Register = () => {
             <div className="group">
               <label
                 htmlFor="isSeller"
-                className={`flex items-center gap-4 p-4 rounded-xl border cursor-pointer transition-all duration-300 ${
-                  formData.isSeller
-                    ? 'border-violet-500/60 bg-violet-500/10 shadow-[0_0_0_3px_rgba(139,92,246,0.1)]'
-                    : 'border-white/10 bg-white/[0.03] hover:bg-white/[0.06] hover:border-white/20'
-                }`}
+                className={`flex items-center gap-4 p-4 rounded-xl border cursor-pointer transition-all duration-300 ${formData.isSeller
+                  ? 'border-violet-500/60 bg-violet-500/10 shadow-[0_0_0_3px_rgba(139,92,246,0.1)]'
+                  : 'border-white/10 bg-white/[0.03] hover:bg-white/[0.06] hover:border-white/20'
+                  }`}
               >
                 <div className="relative flex-shrink-0">
                   <input
