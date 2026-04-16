@@ -21,17 +21,12 @@ const navigate=useNavigate()
     alert("Email and password are required");
     return;
   }
-
-  try {
-    const res = await handleLogin({
-      email,
-      password,
-    });
-    console.log(res);
-    navigate("/");
-  } catch (err) {
-    console.log(err);
-  }
+    try {
+      await handleLogin({ email, password });
+      navigate("/register")
+    } catch (error) {
+      alert(error.message || "Login failed");
+    }
   };
 
   return (
