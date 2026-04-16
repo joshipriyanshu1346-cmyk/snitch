@@ -23,34 +23,43 @@ async function sendTokenResponse(user,res,message){
         })
 }
 export const registerUser = async (req, res) => {
-    const { email, contact, password, fullname, isseller } = req.body;
-  try {
-    const existingUser = await Usermodel.findOne({
-        $or:[
-            {email},
-            {contact}
-        ]
-     });
-    if (existingUser) {
-      return res
-        .status(400)
-        .json({ success: false, message: "Email already exists" });
-    }
-    const hashedPassword = await bcrypt.hash(password, 10);
-    const newUser = new Usermodel({
-      email,
-      contact,
-      password: hashedPassword,
-      fullname,
-      role: isseller ? "seller" : "buyer",
-    });
-    await sendTokenResponse(newUser,res,"User registered successfully")
-    await Usermodel.create(newUser);    
+   const { email, contact, password, fullname, isseller } = req.body;
 
-  } catch (error) {
-    console.error("Error registering user:", error);
-    res.status(500).json({ success: false, message: "Server error" });
+try {
+  if (!password) {
+    return res.status(400).json({
+      success: false,
+      message: "Password is required",
+    });
   }
+
+  const existingUser = await Usermodel.findOne({
+    $or: [{ email }, { contact }],
+  });
+
+  if (existingUser) {
+    return res.status(400).json({
+      success: false,
+      message: "Email or contact already exists",
+    });
+  }
+
+  const hashedPassword = await bcrypt.hash(password, 10);
+
+  const user = await Usermodel.create({
+    email,
+    contact,
+    password: hashedPassword,
+    fullname,
+    role: isseller ? "seller" : "buyer",
+  });
+
+  await sendTokenResponse(user, res, "User registered successfully");
+
+} catch (error) {
+  console.error("Error registering user:", error);
+  res.status(500).json({ success: false, message: "Server error" });
+}
 };
 
 export const loginUser = async (req, res) => {

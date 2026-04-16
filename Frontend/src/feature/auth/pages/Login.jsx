@@ -12,18 +12,26 @@ const navigate=useNavigate()
     setFormData((prev) => ({ ...prev, [name]: value }));
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    try{
-      handleLogin({
-        email:formData.email,
-        password:formData.password
-      });
-      navigate("/")
-    }
-    catch(err){
-      console.log(err)
-    }
+   
+  const { email, password } = formData;
+
+  if (!email || !password) {
+    alert("Email and password are required");
+    return;
+  }
+
+  try {
+    const res = await handleLogin({
+      email,
+      password,
+    });
+    console.log(res);
+    navigate("/");
+  } catch (err) {
+    console.log(err);
+  }
   };
 
   return (
@@ -132,12 +140,12 @@ const navigate=useNavigate()
                 <label className="block text-xs font-semibold text-white/50 uppercase tracking-wider">
                   Password
                 </label>
-                <a
+                {/* <a
                   href="#"
                   className="text-xs text-violet-400 hover:text-violet-300 transition-colors hover:underline underline-offset-2"
                 >
                   Forgot password?
-                </a>
+                </a> */}
               </div>
               <div
                 className={`flex items-center rounded-xl border transition-all duration-300 bg-white/[0.05] ${
