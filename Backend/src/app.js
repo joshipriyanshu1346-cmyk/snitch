@@ -2,6 +2,7 @@ import express from 'express'
 import morgan from 'morgan'
 import userRoute from './routes/user.route.js'
 import cors from 'cors'
+import productRoute from './routes/product.route.js'
 const app=express()
 app.use(express.json())
 app.use(cors({
@@ -12,4 +13,5 @@ app.use(cors({
 
 app.use(morgan('dev'))
 app.use('/api/auth',userRoute)
+app.use('/api/products',productRoute)
 export default app
