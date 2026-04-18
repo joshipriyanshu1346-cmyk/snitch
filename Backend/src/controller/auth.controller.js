@@ -1,7 +1,7 @@
 import Usermodel from "../models/user.model.js";
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
-import CONFIG from "../config/config.js";
+import { CONFIG } from "../config/config.js";
 
 async function sendTokenResponse(user,res,message){
     const token = jwt.sign({ id: user._id }, 
