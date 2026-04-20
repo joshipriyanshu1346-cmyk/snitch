@@ -14,7 +14,7 @@ const upload=multer({
 });
 const router = express.Router();
 
-router.post('/',AuthMiddleware,upload.array('images',7), validateProduct, createProduct);
+router.post('/',AuthMiddleware,upload.array('images',7), validateProduct(), createProduct);
 router.get('/seller',AuthMiddleware,getProducts);
 
 export default router;

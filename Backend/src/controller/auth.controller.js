@@ -23,7 +23,7 @@ async function sendTokenResponse(user,res,message){
         })
 }
 export const registerUser = async (req, res) => {
-   const { email, contact, password, fullname, isseller } = req.body;
+   const { email, contact, password, fullname, isSeller } = req.body;
 
 try {
   if (!password) {
@@ -51,7 +51,7 @@ try {
     contact,
     password: hashedPassword,
     fullname,
-    role: isseller ? "seller" : "buyer",
+    role: isSeller ? "seller" : "buyer",
   });
 
   await sendTokenResponse(user, res, "User registered successfully");

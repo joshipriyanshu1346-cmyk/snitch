@@ -22,7 +22,7 @@ export const validateProduct=()=>{
         body('title').notEmpty().withMessage('Title is required'),
         body('description').notEmpty().withMessage('Description is required'),
         body('priceAmount').isNumeric().withMessage('Price amount must be a number'),
-        body('priceCurrency').isIn(['USD','EUR','GBP']).withMessage('Price currency must be USD, EUR or GBP'),
+        body('priceCurrency').isIn(['USD','EUR','GBP','INR']).withMessage('Price currency must be USD, EUR or GBP'),
         validateProductRequest
         
         ]

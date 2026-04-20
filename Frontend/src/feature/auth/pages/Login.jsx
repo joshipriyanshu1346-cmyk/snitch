@@ -23,7 +23,7 @@ const navigate=useNavigate()
   }
     try {
       await handleLogin({ email, password });
-      navigate("/register")
+      navigate("/dashboard")
     } catch (error) {
       alert(error.message || "Login failed");
     }

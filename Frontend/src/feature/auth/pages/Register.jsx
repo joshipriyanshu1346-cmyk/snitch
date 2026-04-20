@@ -31,7 +31,7 @@ export const Register = () => {
         fullname:formData.fullName,
         isSeller:formData.isSeller
       });
-      navigate("/")
+      navigate("/dashboard")
     }
     catch(err){
       console.log(err)
