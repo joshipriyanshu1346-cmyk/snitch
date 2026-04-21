@@ -1,14 +1,20 @@
-import ImageKit from '@imagekit/nodejs';
-import { CONFIG } from '../config/config.js';
-const client = new ImageKit({
-  privateKey: CONFIG.IMAGEKIT_PRIVATE_KEY, // This is the default and can be omitted
-});
+import { v2 as cloudinary } from "cloudinary";
+import { cloudinaryConfig } from "../config/coludnary.js";
 
-export async function uploadFile({buffer,filename,folder='snitch'}){
-    const response = await client.files.upload({
-        file: buffer,
-        fileName: filename,
-        folder
-    })
-    return response 
-}
+export const uploadImage = (fileBuffer) => {
+  return new Promise((resolve, reject) => {
+    cloudinary.uploader.upload_stream(
+      {
+        folder: "snitch", // folder name
+      },
+      (error, result) => {
+        if (error) {
+          console.error("Cloudinary Error:", error);
+          reject(error);
+        } else {
+          resolve(result);
+        }
+      }
+    ).end(fileBuffer);
+  });
+};
