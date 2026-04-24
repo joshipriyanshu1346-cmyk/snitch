@@ -1,58 +1,56 @@
-import { createBrowserRouter } from 'react-router-dom';
-import MainLayout from '../feature/core/layouts/MainLayout';
-import Login from '../feature/auth/pages/Login';
-import { Register } from '../feature/auth/pages/Register';
-import Dashboard from '../feature/product/pages/Dashboard';
-import Createproduct from '../feature/product/pages/Createproduct';
-import Home from '../feature/home/pages/Home';
-import Cart from '../feature/cart/pages/Cart';
-import AdminDashboard from '../feature/admin/pages/AdminDashboard';
-import SellerproductDetails from '../feature/product/pages/SellerproductDetails';
+import { createBrowserRouter } from "react-router-dom";
+import MainLayout from "../feature/core/layouts/MainLayout";
+import Login from "../feature/auth/pages/Login";
+import { Register } from "../feature/auth/pages/Register";
+import Dashboard from "../feature/product/pages/Dashboard";
+import Createproduct from "../feature/product/pages/Createproduct";
+import Home from "../feature/home/pages/Home";
+import Cart from "../feature/cart/pages/Cart";
+import AdminDashboard from "../feature/admin/pages/AdminDashboard";
+import SellerproductDetails from "../feature/product/pages/SellerproductDetails";
 
 export const router = createBrowserRouter([
   // Auth pages (no navbar/footer)
   {
-    path: '/login',
+    path: "/login",
     element: <Login />,
   },
   {
-    path: '/register',
+    path: "/register",
     element: <Register />,
   },
 
   // Admin (own layout)
   {
-    path: '/admin',
+    path: "/admin",
     element: <AdminDashboard />,
   },
 
   // Create Product (seller standalone page)
   {
-    path: '/create-product',
+    path: "/create-product",
     element: <Createproduct />,
   },
-
+  {
+    path: "/seller-product-details",
+    element: <SellerproductDetails />,
+  },
   // Main layout pages
   {
     element: <MainLayout />,
     children: [
       {
-        path: '/',
+        path: "/",
         element: <Home />,
       },
       {
-        path: '/cart',
+        path: "/cart",
         element: <Cart />,
       },
       {
-        path: '/dashboard',
+        path: "/dashboard",
         element: <Dashboard />,
       },
-      {
-        path: '/seller-product-details',
-        element: <SellerproductDetails/>,
-      }
-
     ],
   },
 ]);

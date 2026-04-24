@@ -19,17 +19,20 @@ const STATUS_STYLES = {
 };
 
 export const Dashboard = () => {
-
-
   const { user } = useSelector((state) => state.auth);
   const navigate = useNavigate();
 
+  React.useEffect(() => {
+    if (!user) {
+      navigate('/login');
+    }
+  }, [user, navigate]);
+
+  const isSeller = user?.role === 'seller';
+
   if (!user) {
-    navigate('/login');
     return null;
   }
-
-  const isSeller = user.role === 'seller';
 
   const stats = [
     { label: 'Total Orders', value: '12', icon: '📦', color: 'bg-blue-50 dark:bg-blue-500/10' },
@@ -132,8 +135,8 @@ export const Dashboard = () => {
       {/* Quick Actions */}
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 mt-6">
         {[
-          { label: isSeller ? 'Add Product' : 'Browse Shop', icon: isSeller ? '➕' : '🛍️', path:isSeller ? '/create-product' : '/products' },
-          { label: isSeller ? 'View Sales' : 'Track Order', icon: isSeller ? '📊' : '🚚', path: '#' },
+          { label: isSeller ? 'Add Product' : 'Browse Shop', icon: isSeller ? '➕' : '🛍️', path: isSeller ? '/create-product' : '/products' },
+          { label: isSeller ? 'My Products' : 'Track Order', icon: isSeller ? '🏷️' : '🚚', path: isSeller ? '/seller-product-details' : '#' },
           { label: 'Wishlist', icon: '❤️', path: '/products' },
           { label: 'Settings', icon: '⚙️', path: '#' },
         ].map((action) => (
