@@ -1,4 +1,4 @@
-import React, { useState, useRef } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import { useProduct } from '../hook/useProduct.js';
 import { useNavigate, Link } from 'react-router-dom';
 
@@ -22,6 +22,17 @@ const Createproduct = () => {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [dragActive, setDragActive] = useState(false);
   const [urlInput, setUrlInput] = useState('');
+  const [notification, setNotification] = useState({ show: false, message: '', type: 'success' });
+
+  // Auto-hide notification
+  useEffect(() => {
+    if (notification.show) {
+      const timer = setTimeout(() => {
+        setNotification(prev => ({ ...prev, show: false }));
+      }, 10000);
+      return () => clearTimeout(timer);
+    }
+  }, [notification.show]);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -47,13 +58,21 @@ const Createproduct = () => {
   const processFiles = (files) => {
     const remainingSlots = 7 - formData.images.length;
     if (remainingSlots <= 0) {
-      alert('You have already reached the limit of 7 images.');
+      setNotification({
+        show: true,
+        message: 'You have already reached the limit of 7 images.',
+        type: 'error'
+      });
       return;
     }
 
     const filesToProcess = files.slice(0, remainingSlots);
     if (files.length > remainingSlots) {
-      alert(`Only the first ${remainingSlots} images were added. Limit is 7.`);
+      setNotification({
+        show: true,
+        message: `Only the first ${remainingSlots} images were added. Limit is 7.`,
+        type: 'error'
+      });
     }
 
     filesToProcess.forEach((file) => {
@@ -92,40 +111,41 @@ const Createproduct = () => {
     if (!formData.title || !formData.priceAmount) return;
 
     setIsSubmitting(true);
-    // try {
-    //   await handleCreateProduct({
-    //     title: formData.title,
-    //     description: formData.description,
-    //     price: {
-    //       amount: Number(formData.priceAmount),
-    //       currency: formData.priceCurrency,
-    //     },
-    //     images: formData.images, // Use images array
-    //   });
-    //   navigate('/dashboard');
-    // } catch (err) {
-    //   console.error('Error creating product:', err);
-    // } finally {
-    //   setIsSubmitting(false);
-    // }
-     const data = new FormData();
 
-  data.append("title", formData.title);
-  data.append("description", formData.description);
-  data.append("priceAmount", formData.priceAmount);
-  data.append("priceCurrency", formData.priceCurrency);
+    const data = new FormData();
 
-  // Append all images
-  files.forEach(file => data.append("images", file));
+    data.append("title", formData.title);
+    data.append("description", formData.description);
+    data.append("priceAmount", formData.priceAmount);
+    data.append("priceCurrency", formData.priceCurrency);
 
-  try {
-    await handleCreateProduct(data);
-    navigate('/dashboard');
-  } catch (err) {
-    console.log(err.response?.data);
-  }
+    // Append all images
+    files.forEach(file => data.append("images", file));
 
-  
+    try {
+      await handleCreateProduct(data);
+      setNotification({
+        show: true,
+        message: 'Product published successfully! Redirecting...',
+        type: 'success'
+      });
+
+      // Delay navigation to let user see the success message
+      setTimeout(() => {
+        navigate('/seller-product-details');
+      }, 1500);
+    } catch (err) {
+      console.log(err.response?.data);
+      setNotification({
+        show: true,
+        message: err.response?.data?.message || 'Failed to publish product. Please try again.',
+        type: 'error'
+      });
+    } finally {
+      setIsSubmitting(false);
+    }
+
+
 
   };
 
@@ -152,7 +172,46 @@ const Createproduct = () => {
   ];
 
   return (
-    <div className="min-h-screen bg-white dark:bg-neutral-950">
+    <div className="min-h-screen bg-white dark:bg-neutral-950 relative">
+      {/* Custom Notification */}
+      {notification.show && (
+        <div className="fixed top-6 left-1/2 -translate-x-1/2 z-[100] animate-slide-down">
+          <div className={`flex items-center gap-3 px-6 py-4 rounded-2xl shadow-2xl border ${notification.type === 'success'
+            ? 'bg-white dark:bg-neutral-900 border-green-100 dark:border-green-900/30'
+            : 'bg-white dark:bg-neutral-900 border-red-100 dark:border-red-900/30'
+            }`}>
+            <div className={`w-10 h-10 rounded-full flex items-center justify-center ${notification.type === 'success' ? 'bg-green-50 dark:bg-green-500/10' : 'bg-red-50 dark:bg-red-500/10'
+              }`}>
+              {notification.type === 'success' ? (
+                <svg className="w-5 h-5 text-green-600 dark:text-green-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
+                </svg>
+              ) : (
+                <svg className="w-5 h-5 text-red-600 dark:text-red-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
+                </svg>
+              )}
+            </div>
+            <div>
+              <p className="text-sm font-bold text-gray-900 dark:text-white font-[Poppins]">
+                {notification.type === 'success' ? 'Success' : 'Error'}
+              </p>
+              <p className="text-xs text-gray-500 dark:text-gray-400 mt-0.5">
+                {notification.message}
+              </p>
+            </div>
+            <button
+              onClick={() => setNotification(prev => ({ ...prev, show: false }))}
+              className="ml-4 p-1 hover:bg-gray-100 dark:hover:bg-neutral-800 rounded-lg transition-colors"
+            >
+              <svg className="w-4 h-4 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
+              </svg>
+            </button>
+          </div>
+        </div>
+      )}
+
       {/* Top Header Bar */}
       <div className="border-b border-gray-100 dark:border-neutral-900">
         <div className="max-w-7xl mx-auto px-6 lg:px-10 py-4 flex items-center justify-between">
@@ -503,7 +562,7 @@ const Createproduct = () => {
                 {/* Action Buttons */}
                 <div className="flex flex-col sm:flex-row gap-3 pt-2">
                   <button
-                    
+
                     id="create-product-submit"
                     type="submit"
                     disabled={isSubmitting || !formData.title || !formData.priceAmount}
