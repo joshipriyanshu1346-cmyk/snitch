@@ -17,5 +17,16 @@ export function useAuth() {
     
     }
 
-  return {handleLogin,handleRegister} 
+    async function handleGetMe(){
+    try {
+      const data = await getMe();
+      dispatch(setUser(data.user));
+    } catch (error) {
+      dispatch(setError(error.message || "Failed to fetch user data"));
+    } finally {
+      dispatch(setLoading(false));
+
+    }
+  }
+  return {handleLogin,handleRegister,handleGetMe} 
 }

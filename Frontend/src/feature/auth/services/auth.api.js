@@ -56,3 +56,22 @@ export async function register({
     }
   }
 }
+
+export async function getMe(){
+  try {
+    const response = await api.get("/getMe");
+    return response.data;
+  }
+  catch (error) {
+    if (error.response && error.response.data) {
+      throw error.response.data;
+    }
+    else if (error.message) {
+      throw new Error(error.message);
+    }
+    else {
+      throw new Error("Something went wrong");
+    }
+  }
+
+}
