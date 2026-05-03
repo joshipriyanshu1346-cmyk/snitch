@@ -212,37 +212,7 @@ const Createproduct = () => {
         </div>
       )}
 
-      {/* Top Header Bar */}
-      <div className="border-b border-gray-100 dark:border-neutral-900">
-        <div className="max-w-7xl mx-auto px-6 lg:px-10 py-4 flex items-center justify-between">
-          {/* Logo */}
-          <Link to="/" className="flex items-center gap-2.5">
-            <div className="w-9 h-9 rounded-xl bg-black dark:bg-white flex items-center justify-center">
-              <span className="text-base font-bold text-white dark:text-black font-[Poppins]">S</span>
-            </div>
-            <span className="text-lg font-bold text-black dark:text-white tracking-tight font-[Poppins]">SNITCH</span>
-          </Link>
 
-          {/* Breadcrumb */}
-          <div className="hidden sm:flex items-center gap-2 text-sm">
-            <Link to="/dashboard" className="text-gray-400 hover:text-gray-600 dark:hover:text-gray-300 transition-colors">
-              Dashboard
-            </Link>
-            <svg className="w-4 h-4 text-gray-300 dark:text-neutral-700" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-              <path strokeLinecap="round" strokeLinejoin="round" d="M9 5l7 7-7 7" />
-            </svg>
-            <span className="text-gray-900 dark:text-white font-medium">New Product</span>
-          </div>
-
-          {/* Back */}
-          <Link to="/dashboard" className="flex items-center gap-2 text-sm text-gray-500 hover:text-black dark:hover:text-white transition-colors">
-            <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
-              <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
-            </svg>
-            <span className="hidden sm:inline">Close</span>
-          </Link>
-        </div>
-      </div>
 
       {/* Main Content */}
       <div className="max-w-7xl mx-auto px-6 lg:px-10 py-8 lg:py-12">

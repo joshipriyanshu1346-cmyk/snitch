@@ -10,6 +10,7 @@ const Userschema = mongoose.Schema({
     enum: ["buyer", "seller"],
     default: "buyer",
   },
+  favorites: [{ type: mongoose.Schema.Types.ObjectId, ref: "product" }],
 });
 
 const Usermodel = mongoose.model("user", Userschema);

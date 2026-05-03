@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useSelector } from 'react-redux';
+import {getCart} from '../../cart/services/cart.api';
 
 const Navbar = () => {
   const [scrolled, setScrolled] = useState(false);
@@ -11,6 +12,8 @@ const Navbar = () => {
   const searchRef = useRef(null);
   const navigate = useNavigate();
   const { user } = useSelector((state) => state.auth);
+  const [items, setItems] = useState([]);
+
 
   useEffect(() => {
     const handleScroll = () => setScrolled(window.scrollY > 20);
@@ -40,12 +43,31 @@ const Navbar = () => {
 
   const suggestions = ['T-Shirts', 'Jeans', 'Jackets', 'Hoodies', 'Sneakers', 'Watches'];
   const filtered = suggestions.filter(s => s.toLowerCase().includes(searchQuery.toLowerCase()));
+   useEffect(() => {
+      fetchCart();
+      window.addEventListener('cartUpdated', fetchCart);
+      return () => window.removeEventListener('cartUpdated', fetchCart);
+    }, []);
+  
+   const fetchCart = async () => {
+      try {
+        const data = await getCart();
+        setItems(data.cart?.items || []);
+      } catch (err) {
+        console.error('Error fetching cart:', err);
+        setItems([]);
+      }
+    };
+
+  
+
+  
 
   const navLinks = [
     { label: 'Home', path: '/' },
-    { label: 'Shop', path: '/products' },
-    { label: 'New Arrivals', path: '/products?sort=newest' },
-    { label: 'Sale', path: '/products?sale=true' },
+    { label: 'Shop', path: '/#featured-products' },
+    { label: 'New Arrivals', path: '/#featured-products' },
+    { label: 'Sale', path: '/#featured-products' },
   ];
 
   return (
@@ -136,7 +158,7 @@ const Navbar = () => {
                         {filtered.length > 0 ? filtered.map((s) => (
                           <button
                             key={s}
-                            onClick={() => { setSearchQuery(''); setSearchOpen(false); navigate('/products'); }}
+                            onClick={() => { setSearchQuery(''); setSearchOpen(false); navigate('/#featured-products'); }}
                             className="w-full text-left px-3 py-2 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-white/5 rounded-lg transition-colors"
                           >
                             {s}
@@ -169,7 +191,7 @@ const Navbar = () => {
 
               {/* Wishlist */}
               <Link
-                to="/products"
+                to="/favorites"
                 className="hidden sm:flex p-2.5 rounded-xl text-gray-500 dark:text-gray-400 hover:text-black dark:hover:text-white hover:bg-gray-100 dark:hover:bg-white/5 transition-all"
                 aria-label="Wishlist"
               >
@@ -188,7 +210,7 @@ const Navbar = () => {
                   <path strokeLinecap="round" strokeLinejoin="round" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z" />
                 </svg>
                 <span className="absolute top-1 right-1 w-4 h-4 bg-[#FF6B35] text-white text-[10px] font-bold rounded-full flex items-center justify-center">
-                  3
+                {items.length}
                 </span>
               </Link>
 
@@ -233,7 +255,7 @@ const Navbar = () => {
         <div className="flex items-center justify-around">
           {[
             { label: 'Home', path: '/', icon: <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.8}><path strokeLinecap="round" strokeLinejoin="round" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6" /></svg> },
-            { label: 'Shop', path: '/products', icon: <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.8}><path strokeLinecap="round" strokeLinejoin="round" d="M4 6h16M4 10h16M4 14h16M4 18h16" /></svg> },
+            { label: 'Shop', path: '/#featured-products', icon: <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.8}><path strokeLinecap="round" strokeLinejoin="round" d="M4 6h16M4 10h16M4 14h16M4 18h16" /></svg> },
             { label: 'Cart', path: '/cart', icon: <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.8}><path strokeLinecap="round" strokeLinejoin="round" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z" /></svg>, badge: 3 },
             { label: 'Account', path: user ? '/dashboard' : '/login', icon: <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.8}><path strokeLinecap="round" strokeLinejoin="round" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" /></svg> },
           ].map((item) => (

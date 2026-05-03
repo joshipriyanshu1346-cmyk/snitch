@@ -73,5 +73,50 @@ export async function getMe(){
       throw new Error("Something went wrong");
     }
   }
-
 }
+
+export async function updateProfile(data) {
+  try {
+    const response = await api.put("/update", data);
+    return response.data;
+  } catch (error) {
+    if (error.response && error.response.data) {
+      throw error.response.data;
+    } else if (error.message) {
+      throw new Error(error.message);
+    } else {
+      throw new Error("Something went wrong");
+    }
+  }
+}
+
+export async function toggleFavorite(productId) {
+  try {
+    const response = await api.post("/favorites/toggle", { productId });
+    return response.data;
+  } catch (error) {
+    if (error.response && error.response.data) {
+      throw error.response.data;
+    } else if (error.message) {
+      throw new Error(error.message);
+    } else {
+      throw new Error("Something went wrong");
+    }
+  }
+}
+
+export async function getFavorites() {
+  try {
+    const response = await api.get("/favorites");
+    return response.data;
+  } catch (error) {
+    if (error.response && error.response.data) {
+      throw error.response.data;
+    } else if (error.message) {
+      throw new Error(error.message);
+    } else {
+      throw new Error("Something went wrong");
+    }
+  }
+}
+

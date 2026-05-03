@@ -8,11 +8,14 @@ const Login = () => {
   const [focused, setFocused] = useState("");
   const { handleLogin } = useAuth();
   const navigate = useNavigate();
+  
 
   const handleChange = (e) => {
     const { name, value } = e.target;
     setFormData((prev) => ({ ...prev, [name]: value }));
   };
+  
+
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -23,7 +26,8 @@ const Login = () => {
     }
     try {
       await handleLogin({ email, password });
-      navigate("/dashboard");
+    
+      navigate("/");
     } catch (error) {
       alert(error.message || "Login failed");
     }

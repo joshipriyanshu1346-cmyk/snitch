@@ -26,3 +26,47 @@ export const getProducts=async()=>{
         throw err;
     }   
 }
+
+export const getAllProducts=async()=>{
+    try{
+        const response=await api.get("/all");
+        return response.data;
+    }
+    catch(err){
+        console.error("Error fetching all products:", err);
+        throw err;
+    }   
+}
+
+export const updateProduct=async(productId, form)=>{
+    try{
+        const response=await api.put(`/${productId}`, form);
+        return response.data;
+    }
+    catch(err){
+        console.error("Error updating product:", err);
+        throw err;
+    }
+}
+
+export const deleteProduct=async(productId)=>{
+    try{
+        const response=await api.delete(`/${productId}`);
+        return response.data;
+    }
+    catch(err){
+        console.error("Error deleting product:", err);
+        throw err;
+    }
+}
+
+export const getProductById=async(productId)=>{
+    try{
+        const response=await api.get(`/${productId}`);
+        return response.data;
+    }
+    catch(err){
+        console.error("Error fetching product details:", err);
+        throw err;
+    }
+}
