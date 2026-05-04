@@ -3,68 +3,95 @@ import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
 import { CONFIG } from "../config/config.js";
 
-async function sendTokenResponse(user,res,message){
-    const token = jwt.sign({ id: user._id }, 
-        CONFIG.JWT_SECRET, { expiresIn: "1d" });
+// async function sendTokenResponse(user, res, message) {
+//   const token = jwt.sign({ id: user._id },
+//     CONFIG.JWT_SECRET, { expiresIn: "1d" });
 
-        res.cookie("token", token, { maxAge: 24 * 60 * 60 * 1000, httpOnly: true })
+//   res.cookie("token", token, { maxAge: 24 * 60 * 60 * 1000, httpOnly: true })
 
-        res.status(200).json({
-            message,
-            success:true,
-            user:{
-                id:user._id,
-                email:user.email,
-                contact:user.contact,
-                fullname:user.fullname,
-                role:user.role,
-                favorites:user.favorites || []
+//   res.status(200).json({
+//     message,
+//     success: true,
+//     user: {
+//       id: user._id,
+//       email: user.email,
+//       contact: user.contact,
+//       fullname: user.fullname,
+//       role: user.role,
+//       favorites: user.favorites || []
 
-            }
-        })
+//     }
+//   })
+// }
+async function sendTokenResponse(user, res, message) {
+  const token = jwt.sign(
+    { id: user._id },
+    CONFIG.JWT_SECRET,
+    { expiresIn: "1d" }
+  );
+
+  res.cookie("token", token, {
+    httpOnly: true,
+    secure: true,        // ✅ REQUIRED for HTTPS (Render + Vercel)
+    sameSite: "None",    // ✅ MOST IMPORTANT (cross-origin fix)
+    maxAge: 24 * 60 * 60 * 1000
+  });
+
+  res.status(200).json({
+    message,
+    success: true,
+    user: {
+      id: user._id,
+      email: user.email,
+      contact: user.contact,
+      fullname: user.fullname,
+      role: user.role,
+      favorites: user.favorites || []
+    }
+  });
 }
 export const registerUser = async (req, res) => {
-   const { email, contact, password, fullname, isSeller } = req.body;
+  const { email, contact, password, fullname, isSeller } = req.body;
 
-try {
-  if (!password) {
-    return res.status(400).json({
-      success: false,
-      message: "Password is required",
+  try {
+    if (!password) {
+      return res.status(400).json({
+        success: false,
+        message: "Password is required",
+      });
+    }
+
+    const existingUser = await Usermodel.findOne({
+      $or: [{ email }, { contact }],
     });
-  }
 
-  const existingUser = await Usermodel.findOne({
-    $or: [{ email }, { contact }],
-  });
+    if (existingUser) {
+      return res.status(400).json({
+        success: false,
+        message: "Email or contact already exists",
+      });
+    }
 
-  if (existingUser) {
-    return res.status(400).json({
-      success: false,
-      message: "Email or contact already exists",
+    const hashedPassword = await bcrypt.hash(password, 10);
+
+    const user = await Usermodel.create({
+      email,
+      contact,
+      password: hashedPassword,
+      fullname,
+      role: isSeller ? "seller" : "buyer",
     });
+
+    await sendTokenResponse(user, res, "User registered successfully");
+
+  } catch (error) {
+    console.error("Error registering user:", error);
+    res.status(500).json({ success: false, message: "Server error" });
   }
-
-  const hashedPassword = await bcrypt.hash(password, 10);
-
-  const user = await Usermodel.create({
-    email,
-    contact,
-    password: hashedPassword,
-    fullname,
-    role: isSeller ? "seller" : "buyer",
-  });
-
-  await sendTokenResponse(user, res, "User registered successfully");
-
-} catch (error) {
-  console.error("Error registering user:", error);
-  res.status(500).json({ success: false, message: "Server error" });
-}
 };
 
 export const loginUser = async (req, res) => {
-    const { email, password } = req.body;
+  const { email, password } = req.body;
   try {
     const user = await Usermodel.findOne({ email });
     if (!user) {
@@ -78,7 +105,7 @@ export const loginUser = async (req, res) => {
         .status(400)
         .json({ success: false, message: "Invalid email or password" });
     }
-    await sendTokenResponse(user,res,"user loggin successfuully")
+    await sendTokenResponse(user, res, "user loggin successfuully")
   } catch (error) {
     console.error("Error logging in user:", error);
     res.status(500).json({ success: false, message: "Server error" });
