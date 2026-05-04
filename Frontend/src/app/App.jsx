@@ -9,8 +9,7 @@ function App() {
 
   useEffect(() => {
     handleGetMe();
-  
-  }, []);
+  }, [handleGetMe]);
 
   return <RouterProvider router={router} />
 }
