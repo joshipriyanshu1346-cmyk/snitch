@@ -9,6 +9,8 @@ export const CONFIG={
     IMAGEKIT_URL_ENDPOINT:process.env.IMAGEKIT_URL_ENDPOINT,
     RAZORPAY_KEY_ID:process.env.RAZORPAY_API_KEY,
     RAZORPAY_KEY_SECRET:process.env.RAZORPAY_API_SECRET,
+    GEMINI_API_KEY:process.env.GEMINI_API_KEY,
+    COHERE_API_KEY:process.env.COHERE_API_KEY,
 }
 
     

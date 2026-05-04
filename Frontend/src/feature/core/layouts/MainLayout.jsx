@@ -5,6 +5,7 @@ import UserNavbar from '../components/UserNavbar';
 import SellerNavbar from '../components/SellerNavbar';
 import Footer from '../components/Footer';
 import BackToTop from '../components/BackToTop';
+import ChatAssistant from '../../ai/components/ChatAssistant';
 
 const MainLayout = () => {
   const { user } = useSelector((state) => state.auth);
@@ -19,6 +20,7 @@ const MainLayout = () => {
       </main>
       <Footer />
       <BackToTop />
+      <ChatAssistant />
     </div>
   );
 };
